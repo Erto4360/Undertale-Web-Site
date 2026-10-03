@@ -1,0 +1,242 @@
+<!DOCTYPE html>
+<html lang="tr">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>UNDERTALE · Yeraltına Düşüş</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Press+Start+2P&family=VT323&display=swap" rel="stylesheet">
+<style>
+:root{--w:#fff;--y:#ffe000;--r:#ff2a2a;--o:#ff8a1f;--glow:rgba(255,255,255,.55);--y0:0}
+*{box-sizing:border-box;margin:0;padding:0}
+html{scroll-behavior:smooth}
+body{background:#000 url('undertale.jpg') center top / cover no-repeat fixed;color:var(--w);font-family:"VT323","Courier New",monospace;font-size:24px;line-height:1.25;overflow-x:hidden;min-height:100vh;image-rendering:pixelated;backdrop-filter:contrast(1.08) sharpness(1.1)}
+button{font:inherit;color:inherit}
+:focus-visible{outline:3px dashed var(--y);outline-offset:3px}
+
+.hero{position:relative;min-height:100vh;display:flex;flex-direction:column;align-items:center;justify-content:center;text-align:center;padding:2rem 1rem;
+ background:radial-gradient(ellipse 70% 45% at 50% -5%,rgba(0,0,0,.3),rgba(0,0,0,.75) 70%)}
+.logo-img{max-width:min(550px,85vw);height:auto;filter:drop-shadow(0 0 18px var(--glow)) drop-shadow(0 0 48px rgba(255,255,255,.35));animation:pulse 4s ease-in-out infinite}
+.logo-sub{font-family:"Press Start 2P",monospace;font-size:clamp(0.7rem,1.8vw,1.2rem);letter-spacing:.3em;margin-top:1.6rem;color:var(--y);text-shadow:0 0 12px rgba(255,224,0,.7)}
+@keyframes pulse{50%{filter:drop-shadow(0 0 26px #fff) drop-shadow(0 0 70px rgba(255,255,255,.5))}}
+.hero p{margin-top:2.4rem;max-width:32ch;color:#cfcfcf;background:rgba(0,0,0,.6);padding:.4rem 1rem;border-radius:4px}
+.scrollcue{margin-top:3rem;color:var(--y);animation:blink 1.1s steps(2) infinite;text-shadow:0 0 8px #000}
+@keyframes blink{50%{opacity:0}}
+.hero .heart{margin-top:1.2rem;animation:bob 2s ease-in-out infinite}
+
+.story{position:relative;height:550vh;background:rgba(0,0,0,.45)}
+.streaks{position:absolute;inset:0;opacity:.18;pointer-events:none;
+ background:repeating-linear-gradient(90deg,transparent 0 47px,#8aa 47px 49px,transparent 49px 120px),
+ repeating-linear-gradient(0deg,#000 0 30px,transparent 30px 80px);background-position:0 var(--y0)}
+
+.fall-fixed{position:fixed;top:40vh;left:50%;transform:translate(-50%,-50%);z-index:5;pointer-events:none;opacity:0;transition:opacity .3s ease}
+.fall-fixed.active{opacity:1}
+.fall-fixed img{width:auto;height:120px;filter:drop-shadow(0 0 14px rgba(255,255,255,.8));image-rendering:pixelated}
+
+.hud{position:fixed;left:50%;transform:translateX(-50%);bottom:14px;z-index:20;background:#000;border:3px solid #fff;padding:.1rem 1rem;font-size:20px;
+ box-shadow:0 0 14px var(--glow);opacity:0;transition:opacity .4s;pointer-events:none}
+.hud.on{opacity:1}
+
+.item{position:absolute;will-change:transform;z-index:3}
+.shot{border:4px solid #fff;background:#000;padding:0;box-shadow:0 0 16px rgba(255,255,255,.35),0 0 40px rgba(120,120,255,.2);overflow:hidden}
+.shot img{width:min(260px,36vw);height:auto;display:block;image-rendering:pixelated}
+.shot figcaption{padding:.2rem .5rem;font-size:18px;color:#bbb;border-top:3px solid #fff;text-align:center}
+
+.dlg{width:min(340px,58vw);border:4px solid #fff;background:#000;padding:.8rem 1rem;box-shadow:0 0 14px rgba(255,255,255,.35);font-size:24px;line-height:1.3}
+.dlg.big{width:min(420px,68vw)}
+
+.soul{filter:drop-shadow(0 0 8px currentColor);animation:bob 3s ease-in-out infinite}
+@keyframes bob{50%{transform:translateY(-10px)}}
+.soulwrap{position:absolute}
+
+.left{left:4%}
+.right{right:4%}
+
+.pick{position:relative;z-index:6;padding:7rem 1rem 9rem;display:flex;flex-direction:column;align-items:center;gap:1.4rem;
+ background:rgba(0,0,0,.85);backdrop-filter:blur(4px)}
+.pick h2{font-family:"Press Start 2P",monospace;font-size:clamp(.9rem,3.2vw,1.6rem);text-shadow:0 0 14px var(--glow);text-align:center;line-height:1.6}
+.combo{position:relative;width:min(380px,92vw)}
+.cbtn{width:100%;background:#000;border:4px solid #fff;padding:.5rem 1rem;display:flex;align-items:center;gap:.8rem;cursor:pointer;font-size:28px;
+ box-shadow:0 0 14px var(--glow);text-align:left}
+.cbtn:hover,.cbtn[aria-expanded=true]{border-color:var(--y);color:var(--y);box-shadow:0 0 18px rgba(255,224,0,.6)}
+.cbtn .car{margin-left:auto;transition:transform .2s}
+.cbtn[aria-expanded=true] .car{transform:rotate(180deg)}
+.list{position:absolute;top:100%;left:0;right:0;margin-top:6px;background:#000;border:4px solid #fff;list-style:none;z-index:30;display:none;box-shadow:0 0 22px var(--glow)}
+.list.open{display:block}
+.list li{padding:.35rem 1rem .35rem 2.6rem;font-size:28px;cursor:pointer;position:relative}
+.list li[aria-selected=true]{color:var(--y)}
+.list li:hover,.list li.act{color:var(--y)}
+.list li:hover::before,.list li.act::before{content:"";position:absolute;left:.9rem;top:50%;width:16px;height:14px;margin-top:-7px;background:var(--r);
+ clip-path:polygon(0 25%,25% 0,50% 25%,75% 0,100% 25%,100% 55%,50% 100%,0 55%)}
+.card{display:flex;flex-direction:column;align-items:center;gap:1.2rem;width:min(640px,94vw)}
+.stage{width:200px;height:200px;display:flex;align-items:center;justify-content:center;border-bottom:4px dashed #333}
+.stage img{max-width:180px;max-height:180px;height:auto;width:auto;image-rendering:pixelated;animation:idle 1.6s steps(2) infinite}
+@keyframes idle{50%{transform:translateY(-4px)}}
+.name{font-family:"Press Start 2P",monospace;font-size:1rem;color:var(--y);text-shadow:0 0 10px rgba(255,224,0,.6)}
+.box{width:100%;border:6px solid #fff;background:#000;padding:1rem 1.2rem 1rem 1.4rem;min-height:132px;font-size:30px;position:relative;box-shadow:0 0 22px var(--glow)}
+.box .t::before{content:"* ";}
+.box .cur{display:inline-block;width:14px;height:24px;background:#fff;vertical-align:-3px;margin-left:4px;animation:blink 1s steps(2) infinite}
+.btn{background:#000;border:4px solid var(--o);color:var(--o);padding:.3rem 1.6rem;font-size:26px;cursor:pointer;box-shadow:0 0 12px rgba(255,138,31,.5)}
+.btn:hover{background:var(--o);color:#000}
+.btn:active{transform:translateY(2px)}
+
+footer{padding:2rem 1rem 8rem;text-align:center;color:#aaa;font-size:20px;background:rgba(0,0,0,.9)}
+
+.frisk{position:fixed;right:10px;bottom:6px;z-index:25;cursor:pointer;background:none;border:0;display:flex;flex-direction:column;align-items:flex-end}
+.frisk img{width:80px;height:auto;filter:drop-shadow(0 0 8px rgba(120,160,255,.45));animation:breathe 3.2s ease-in-out infinite;transform-origin:bottom;image-rendering:pixelated}
+@keyframes breathe{50%{transform:scaleY(.96)}}
+.zzz{position:absolute;right:62px;top:-8px;font-family:"Press Start 2P",monospace;font-size:10px;color:#9bd}
+.zzz span{position:absolute;opacity:0;animation:z 3s infinite}
+.zzz span:nth-child(2){animation-delay:1s}.zzz span:nth-child(3){animation-delay:2s}
+@keyframes z{0%{opacity:0;transform:translate(0,14px)}30%{opacity:1}100%{opacity:0;transform:translate(14px,-26px) scale(1.4)}}
+.say{position:absolute;right:calc(100% - 20px);bottom:70px;width:max-content;max-width:min(240px,60vw);background:#000;border:3px solid #fff;padding:.2rem .6rem;font-size:20px;text-align:left;opacity:0;transition:opacity .25s;pointer-events:none}
+.say.on{opacity:1}
+
+@media(max-width:600px){body{font-size:21px}.box{font-size:25px}.frisk img{width:64px!important}.say{bottom:56px}.left{left:2%}.right{right:2%}}
+@media(prefers-reduced-motion:reduce){*{animation:none!important;transition:none!important}html{scroll-behavior:auto}}
+</style>
+</head>
+<body>
+
+<header class="hero">
+  <img src="undertalelogo.png" alt="UNDERTALE" class="logo-img">
+  <div class="logo-sub">YERALTINA DÜŞÜŞ</div>
+  <p>* Aşağı kaydır. Derin çukur seni bekliyor.</p>
+  <div class="heart" id="heroHeart"></div>
+  <div class="scrollcue">▼ kaydır ▼</div>
+</header>
+
+<div class="fall-fixed" id="fallContainer">
+  <img src="fallfrisk1.png" id="fallSprite" alt="Düşen Frisk">
+</div>
+
+<section class="story" id="story" aria-label="Frisk yeraltına düşüyor">
+  <div class="streaks"></div>
+</section>
+
+<section class="pick" id="pick">
+  <h2>* KİMİNLE TANIŞMAK<br>İSTERSİN?</h2>
+  <div class="combo">
+    <button class="cbtn" id="cbtn" aria-haspopup="listbox" aria-expanded="false" aria-controls="list">
+      <span id="cheart"></span><span id="clabel">Sans</span><span class="car">▼</span>
+    </button>
+    <ul class="list" id="list" role="listbox" tabindex="-1" aria-label="Karakterler"></ul>
+  </div>
+  <div class="card">
+    <div class="stage" id="stage"></div>
+    <div class="name" id="cname"></div>
+    <div class="box" aria-live="polite"><span class="t" id="ctext"></span><span class="cur"></span></div>
+    <button class="btn" id="more">* biraz daha konuş</button>
+  </div>
+</section>
+
+<footer>* Bir hayran çalışmasıdır. UNDERTALE Toby Fox tarafından oluşturulmuştur.</footer>
+
+<div class="hud" id="hud">DERİNLİK 0 m</div>
+
+<button class="frisk" id="frisk" aria-label="Tembel Frisk. Dürtmek için tıkla.">
+  <img src="frisk.png" alt="Frisk">
+  <div class="say" id="say"></div>
+  <div class="zzz"><span>z</span><span>Z</span><span>z</span></div>
+</button>
+
+<script>
+const P={w:'#fff',k:'#000',r:'#e02020'};
+function spr(m,sc,col){const c=document.createElement('canvas'),W=m[0].length;c.width=W;c.height=m.length;const x=c.getContext('2d');
+ m.forEach((r,j)=>[...r].forEach((ch,i)=>{const f=col&&ch!=='.'?col:P[ch];if(f){x.fillStyle=f;x.fillRect(i,j,1,1)}}));
+ c.style.width=W*sc+'px';c.style.height=m.length*sc+'px';return c}
+const HEART=[".rr..rr.","rrrrrrrr","rrrrrrrr","rrrrrrrr",".rrrrrr.","..rrrr..","...rr..."];
+
+const SOULS=['#ff2a2a','#40e0ff','#ff8a1f','#2a6cff','#ffe000','#2bd04a','#c050ff'];
+const heart=(sc,col)=>spr(HEART,sc,col||null);
+document.getElementById('heroHeart').append(heart(5));
+
+const story=document.getElementById('story');
+const items=[
+ {k:'d',t:'* Çok uzun zaman önce, Dünya\'ya iki ırk hükmediyordu: İNSANLAR ve CANAVARLAR.',s:'left',y:2,sp:.1,big:1},
+ {k:'h',c:0,s:'right',y:7,sp:.2},
+ {k:'s',img:'gameplay1.jpg',s:'left',y:12,sp:.25},
+ {k:'d',t:'* Bir gün, iki ırk arasında savaş çıktı.',s:'right',y:18,sp:.15},
+ {k:'h',c:1,s:'left',y:23,sp:.3},
+ {k:'s',img:'gameplay1.jpg',s:'right',y:28,sp:.2},
+ {k:'d',t:'* Uzun bir mücadelenin ardından, insanlar zafer kazandı.',s:'left',y:35,sp:.15,big:1},
+ {k:'h',c:2,s:'right',y:41,sp:.25},
+ {k:'s',img:'gameplay1.jpg',s:'left',y:47,sp:.2},
+ {k:'d',t:'* Canavarları büyülü bir sihirle yer altına hapsettiler.',s:'right',y:54,sp:.15},
+ {k:'h',c:3,s:'left',y:60,sp:.3},
+ {k:'s',img:'gameplay1.jpg',s:'right',y:66,sp:.25},
+ {k:'d',t:'* Çok uzun yıllar sonra... EBOTT DAĞI - 201X',s:'left',y:73,sp:.15},
+ {k:'h',c:4,s:'right',y:79,sp:.2},
+ {k:'d',t:'* Efsaneler der ki, dağa tırmananlar asla geri dönmezler.',s:'right',y:86,sp:.12,big:1}
+];
+
+items.forEach(o=>{const e=document.createElement('div');e.className='item '+o.s;e.style.top=o.y+'%';e.dataset.sp=o.sp;
+ if(o.k==='d'){e.innerHTML='<div class="dlg'+(o.big?' big':'')+'"></div>';e.firstChild.textContent=o.t}
+ if(o.k==='s'){const f=document.createElement('figure');f.className='shot';f.innerHTML='<img src="'+o.img+'" alt="Oyun içi Görsel"><figcaption>Oyun içi Görseller</figcaption>';e.append(f)}
+ if(o.k==='h'){e.className+=' soulwrap';const h=heart(4+o.c%3*2,SOULS[o.c]);h.style.color=SOULS[o.c];h.className='soul';h.style.animationDelay=o.c*.4+'s';e.append(h)}
+ story.append(e)});
+
+const fallBox=document.getElementById('fallContainer');
+const fallSprite=document.getElementById('fallSprite');
+const hud=document.getElementById('hud'),els=[...story.querySelectorAll('.item')];
+let tick=false;
+
+function onScroll(){if(tick)return;tick=true;requestAnimationFrame(()=>{tick=false;
+ const y=scrollY,top=story.offsetTop,h=story.offsetHeight-innerHeight,p=Math.min(Math.max((y-top)/h,0),1);
+ 
+ els.forEach(e=>e.style.transform='translateY('+(-(y-top)*e.dataset.sp*.5).toFixed(1)+'px)');
+ story.style.setProperty('--y0',(-(y*.9))+'px');
+ 
+ const inStoryArea=y>=top-innerHeight*.3 && y<=top+story.offsetHeight-innerHeight*.1;
+ fallBox.classList.toggle('active',inStoryArea);
+ 
+ if(inStoryArea){
+   fallSprite.style.transform='rotate('+(Math.sin(p*25)*30+p*360).toFixed(1)+'deg) translateX('+(Math.sin(p*14)*45).toFixed(0)+'px)';
+ }
+ 
+ hud.classList.toggle('on',inStoryArea);
+ hud.textContent='DERİNLİK '+Math.round(p*1750)+' m'+(p>.97?' · YERALTI DÜNYASI':'');
+})}
+addEventListener('scroll',onScroll,{passive:true});addEventListener('resize',onScroll);onScroll();
+
+const fr=document.getElementById('frisk');
+const pokes=['* (Frisk şekerleme yapıyor.)','* (...5 dakika daha.)','* (Frisk esniyor. Hâlâ kararlı.)','* (zzz... horlama sesleri...)','* (Frisk oturmayı tercih ederdi.)'];
+let pi=0,sayT;const say=document.getElementById('say');
+fr.onclick=()=>{say.textContent=pokes[pi++%pokes.length];say.classList.add('on');clearTimeout(sayT);sayT=setTimeout(()=>say.classList.remove('on'),2600)};
+
+const CH=[
+ {n:'Sans',img:'sans.png',c:'#4fb0e8',l:['selam. iyi bir dinlenmeye ya da kötü bir zamana ihtiyacın var gibi. duruma bağlı.','dışarıda harika bir gün. kuşlar ötüyor, çiçekler açıyor... böyle günlerde senin gibi çocuklar...','seninle halletmem gereken bir kemik mevzusu var. anladın mı? ...evet, biraz kıkırdattı.']},
+ {n:'Papyrus',img:'papyrus.png',c:'#ff5a2a',l:['NYEH HEH HEH! BEN, MUHTEŞEM PAPYRUS, BİR İNSANI YAKALAYACAĞIM!','ÇOK ŞANSLISIN! SANA SPAGETTİ SANATINI ÖĞRETECEĞİM!','SANA İNANIYORUM! ...ÇÜNKÜ BEN HARİKAYIM.']},
+ {n:'Toriel',img:'toriel.png',c:'#c090ff',l:['Ah, geldin demek çocuğum. Korkma lütfen.','Bir turta pişirdim. Sıcakken biraz ye.','Ne karar verirsen ver, seni her zaman seveceğimi bil.']},
+ {n:'Flowey',img:'flowey.png',c:'#ffe000',l:['Selam! Ben FLOWEY. Çiçek FLOWEY!','Vay canına, yeraltında gerçekten yenisin, değil mi?','Bu dünyada ya ÖLDÜRÜRSÜN ya da ÖLDÜRÜLÜRSÜN. Heh... ya da belki değil?']},
+ {n:'Undyne',img:'undyne.png',c:'#4fb0e8',l:['NGAAAAHHH! Beni asla geçemeyeceksin insan!','Hadi, bütün kalbinle savaş! HAAAAH!','Papyrus senin iyi biri olduğunu söylemişti. ...Tamam, kalabilirsin.']},
+ {n:'Asgore',img:'asgore.png',c:'#f08020',l:['İnsan... Seninle tanışmak güzeldi. Hoşça kal.','Bir fincan çay ister misin?','Üzgünüm ama tüm canavarların özgürlüğü için seninle savaşmalıyım.']},
+ {n:'Frisk',img:'frisk.png',c:'#ff2a2a',l:['* İçin KARARLILIKLA doldu.','* (Çizgili tişörtlü sessiz bir çocuk.)','* (Harika bir vakit geçireceğini hissediyorsun.)']}
+];
+
+const list=document.getElementById('list'),btn=document.getElementById('cbtn'),stage=document.getElementById('stage');
+let cur=0,act=0,li=0,typing;
+CH.forEach((c,i)=>{const o=document.createElement('li');o.role='option';o.id='opt'+i;o.textContent=c.n;o.onclick=()=>{choose(i);close()};list.append(o)});
+function open_(){list.classList.add('open');btn.setAttribute('aria-expanded','true');act=cur;hl()}
+function close(){list.classList.remove('open');btn.setAttribute('aria-expanded','false')}
+function hl(){[...list.children].forEach((o,i)=>{o.classList.toggle('act',i===act);o.setAttribute('aria-selected',i===cur)});btn.setAttribute('aria-activedescendant','opt'+act)}
+btn.onclick=()=>list.classList.contains('open')?close():open_();
+btn.onkeydown=e=>{const o=list.classList.contains('open');
+ if(e.key==='ArrowDown'||e.key==='ArrowUp'){e.preventDefault();if(!o)return open_();act=(act+(e.key==='ArrowDown'?1:-1)+CH.length)%CH.length;hl()}
+ else if((e.key==='Enter'||e.key===' ')&&o){e.preventDefault();choose(act);close()}
+ else if(e.key==='Escape')close()};
+document.addEventListener('click',e=>{if(!e.target.closest('.combo'))close()});
+function type_(txt){clearTimeout(typing);const el=document.getElementById('ctext');el.textContent='';let i=0;
+ (function step(){if(i<txt.length){el.textContent+=txt[i++];typing=setTimeout(step,txt[i-1]===' '?10:26)}})()}
+function choose(i){cur=i;li=0;const c=CH[i];
+ document.getElementById('clabel').textContent=c.n;
+ const ch=document.getElementById('cheart');ch.replaceChildren(heart(2,c.c));
+ stage.innerHTML='<img src="'+c.img+'" alt="'+c.n+'">';
+ document.getElementById('cname').textContent='* '+c.n.toUpperCase();
+ type_(c.l[0]);hl()}
+document.getElementById('more').onclick=()=>{li=(li+1)%CH[cur].l.length;type_(CH[cur].l[li])};
+choose(0);
+</script>
+</body>
+</html>
